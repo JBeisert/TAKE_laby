@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('calc_xhr').addEventListener('click', () => {
+                var x = document.getElementById('x').value;
+                var y = document.getElementById('y').value;
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function () {
+                    if (xhr.status == 200) {
+                        var resp = xhr.response;
+                        document.getElementById("sum").textContent = resp.sum;
+                        document.getElementById("difference").textContent = resp.difference;
+                        document.getElementById("product").textContent = resp.product;
+                        document.getElementById("quotient").textContent = resp.quotient;
+                    }
+                };
+                xhr.responseType = "json";
+                xhr.open("GET", "/math?x=" + x + "&y=" + y);
+                xhr.send();
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById('calc_fetch').addEventListener('click', () => {
+                var x = document.getElementById('x').value;
+                var y = document.getElementById('y').value;
+
+                fetch("/math?x=" + x + "&y=" + y)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById("sum").textContent = data.sum;
+                        document.getElementById("difference").textContent = data.difference;
+                        document.getElementById("product").textContent = data.product;
+                        document.getElementById("quotient").textContent = data.quotient;
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+    <div>
+        <h1>Calculations</h1>
+        <form>
+            x = <input type="text" id="x" />
+            y = <input type="text" id="y" />
+            <input type="button" id="calc_xhr" value="Call API (XHR)" />
+            <input type="button" id="calc_fetch" value="Call API (Fetch)" />
+        </form>
+        x + y = <span id="sum"></span><br />
+        x - y = <span id="difference"></span><br />
+        x * y = <span id="product"></span><br />
+        x / y = <span id="quotient"></span><br />
+    </div>
+</body>
+</html>
